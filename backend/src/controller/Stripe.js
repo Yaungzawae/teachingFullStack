@@ -1,15 +1,27 @@
+const path = require('path');
 const { formatError } = require('../helpers/formatError');
 const { getUserId } = require('../helpers/jwt');
+const { sendMail } = require('../helpers/sendMail');
 const Class = require('../model/Class');
+const User = require('../model/User');
 
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+const ejs = require("ejs");
+const Session = require('../model/Session');
+
 
 module.exports.registerClassStripe = async (req, res) => {
     const student_id = getUserId(req.cookies.jwt);
-    const { course_id } = req.body;
+    const { course_id, type } = req.body;
 
     try {
-        const course = await Class.findOne({
+        const course = type == "session" ? 
+        await Session.findOne({
+            _id: course_id,
+            isBooked: false
+        })
+        :
+        await Class.findOne({
             _id: course_id,
             $expr: { $lt: ['$booked_seat', '$max_seat'] }
         });
@@ -24,13 +36,16 @@ module.exports.registerClassStripe = async (req, res) => {
             payment_method_types: ['card'],
             metadata: {
                 course_id: course._id.toString(),
-                student_id: student_id
+                student_id: student_id,
             }
         });
 
+        console.log(paymentIntent)
         res.status(200).json({ 
-            clientSecret: paymentIntent.client_secret 
+            clientSecret: paymentIntent.client_secret,
+            // qrCodeUrl: paymentIntent.next_action.promptpay_display_qr_code.qr_code_url
         });
+
     } catch (err) {
         console.log(err);
         res.status(500).json(formatError({ message: 'Server error' }));
@@ -38,7 +53,7 @@ module.exports.registerClassStripe = async (req, res) => {
 }
 
 module.exports.confirmRegistrationStripe = async (req, res) => {
-    const { paymentIntentId } = req.body;
+    const { paymentIntentId, type } = req.body;
 
     try {
         const paymentIntent = await stripe.paymentIntents.retrieve(paymentIntentId);
@@ -46,7 +61,20 @@ module.exports.confirmRegistrationStripe = async (req, res) => {
         if (paymentIntent.status === 'succeeded') {
             const { course_id, student_id } = paymentIntent.metadata;
 
-            const course = await Class.findOneAndUpdate(
+            const course = type == "session" ?
+            await Session.findOneAndUpdate(
+                {
+                    _id: course_id,
+                    isBooked: false
+                },
+                {
+                    student: student_id,
+                    isBooked: true
+                },
+                {new: true}
+            )
+            :
+            await Class.findOneAndUpdate(
                 {
                     _id: course_id,
                     $expr: { $lt: ['$booked_seat', '$max_seat'] }
@@ -61,6 +89,22 @@ module.exports.confirmRegistrationStripe = async (req, res) => {
             if (!course) {
                 return res.status(400).json(formatError({ message: 'Cannot register, class is full or does not exist' }));
             }
+        
+
+            const student = await User.findOne({_id: student_id});
+
+            console.log(student, "AAAAAA")
+            console.log(student.email)
+
+            const html = await ejs.renderFile(
+                path.join(__dirname, "../views/templates/courseRegisterationTemplate.ejs"),
+            )
+
+            const attachments = type == "session" ? [] : [
+                {filename: `${course.text_book}`}
+            ];
+            
+            sendMail(student.email, "Class Registeration", html, attachments);
 
             res.status(200).json(course);
         } else {

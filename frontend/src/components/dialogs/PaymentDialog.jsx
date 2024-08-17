@@ -11,6 +11,10 @@ import { H1, H3, H4, P, Muted } from "../typography/typography";
 import { Elements } from "@stripe/react-stripe-js";
 import { useToast } from "../ui/use-toast";
 
+import ManualPaymentForm from "@/components/forms/ManualPaymentForm";
+import PromptPayForm from "../forms/PromptPayForm";
+import PayPalForm from "../forms/PayPalForm";
+
 
 
 
@@ -21,6 +25,8 @@ const StripePromise = loadStripe("pk_test_51PjKPlRqzH8ZQ7Mc9KaWLMTlOxGPNwHJ4VQ68
 const PaymentDialog = ({open, setOpen, selectedCourse, setSelectedCourse}) => {
 
     const {toast} = useToast();
+
+    const type = selectedCourse.schedule == undefined ? "session"  : "class";
 
     const handlePaymentSuccess = () => {
         toast({ title: 'Course Registration successful!' });
@@ -41,24 +47,36 @@ const PaymentDialog = ({open, setOpen, selectedCourse, setSelectedCourse}) => {
                             </DialogDescription>
                         </DialogHeader>
                         <div>
-                            {selectedCourse.schedule.map((s) => (
+                            {selectedCourse?.schedule?.map((s) => (
                                 <div className="" key={s._id}>
-                                    <H4>{s.day} - {s.start_time} to {s.end_time}</H4>
+                                    <p>{type == "session" ? s.date : s.day} - {s.start_time} to {s.end_time}</p>
                                 </div>
                             ))}
                         </div>
-                        <H1>Total: {selectedCourse.price}$</H1>
+                        {selectedCourse.date ? <p>{selectedCourse.date} ||  {selectedCourse.start_time} - {selectedCourse.end_time}</p> : <></>}
+                        <H3>Total: {selectedCourse.price}$</H3>
 
                         <Tabs defaultValue="stripe">
                             <TabsList className="flex">
                                 <TabsTrigger value="paypal">PayPal</TabsTrigger>
                                 <TabsTrigger value="stripe">Stripe</TabsTrigger>
                                 <TabsTrigger value="promptpay">PromptPay</TabsTrigger>
+                                <TabsTrigger value="wise">Wise</TabsTrigger>
                             </TabsList>
-                            <TabsContent value="paypal">Make changes to your account here.</TabsContent>
+                            <TabsContent value="paypal">
+                                <PayPalForm/>
+                            </TabsContent>
                             <TabsContent value="stripe">
                                 <Elements stripe={StripePromise}>
-                                    <StripeForm courseId={selectedCourse._id} onPaymentSuccess={handlePaymentSuccess} />
+                                    <StripeForm courseId={selectedCourse._id} onPaymentSuccess={handlePaymentSuccess} type={type}/>
+                                </Elements>
+                            </TabsContent>
+                            <TabsContent value="wise">
+                                <ManualPaymentForm courseId={selectedCourse._id} price={selectedCourse.price} type={type} onPaymentSuccess={handlePaymentSuccess}/>
+                            </TabsContent>
+                            <TabsContent value="promptpay">
+                                <Elements stripe={StripePromise}>
+                                    <PromptPayForm courseId={selectedCourse._id} price={selectedCourse.price} onPaymentSuccess={handlePaymentSuccess} type={type}/>
                                 </Elements>
                             </TabsContent>
                         </Tabs>

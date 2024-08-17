@@ -25,6 +25,6 @@ module.exports.formatError = (...errorObjects) => {
   };
 
 
-  module.exports.serverError = (res) => {
+  module.exports.serverError = (res) => { 
     return res.status(500).json({message: "Sever Error"});
   }

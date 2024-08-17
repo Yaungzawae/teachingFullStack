@@ -1,18 +1,21 @@
 const Class = require("../model/Class");
 const { getUserId } = require("../helpers/jwt");
 const { formatError, serverError } = require("../helpers/formatError");
+const User = require("../model/User");
 
 
 module.exports.createClass = async (req, res) => {
+    console.log(req.file)
     try{
         const newCourse = await Class.create({
             title: req.body.title,
             price: req.body.price,
             start_date: req.body.startDate,
-            schedule: req.body.schedule,
+            schedule: JSON.parse(req.body.schedule),
             description: req.body.description,
             max_seat: req.body.maxSeat,
-            teacher: getUserId(req.cookies.jwt)
+            teacher: getUserId(req.cookies.jwt),
+            text_book: `${req.file.destination}/${req.file.filename}`
         })
         res.status(200).json(newCourse);
     } catch(err) {
@@ -31,6 +34,54 @@ module.exports.getAllClassesOfTeacher = async (req, res) => {
         res.sendStatus(500);
     }
 }
+
+module.exports.deleteClass = async (req, res) => {
+    try{
+        await Class.findByIdAndDelete(req.body.class_id);
+        res.sendStatus(201);
+    } catch(err){
+        console.log(err)
+        res.sendStatus(500);
+    }
+}
+
+module.exports.getStudents = async (req, res) => {
+    try {
+        // const course = await Student.find({ class_id: req.body.class_id });
+        console.log(req.body.students)
+        const students = await User.find({
+            _id: { $in: req.body.students}
+        })
+        console.log(students)
+        res.status(200).json(students);
+    } catch (err) {
+        console.log(err);
+        res.sendStatus(500);
+    }
+};
+
+module.exports.editClass = async (req, res) => {
+    console.log(req.body)
+    try {
+        console.log(req.body);
+        await Class.findByIdAndUpdate(req.body.courseId , 
+            {
+                title: req.body.title,
+                price: req.body.price,
+                start_date: req.body.startDate,
+                schedule: JSON.parse(req.body.schedule),
+                description: req.body.description,
+                max_seat: req.body.maxSeat,
+                teacher: getUserId(req.cookies.jwt),
+                text_book: `${req.file.destination}/${req.file.filename}`
+            }
+        );
+        res.sendStatus(200);
+    } catch (err) {
+        console.log(err);
+        res.sendStatus(500);
+    }
+};
 
 
 module.exports.registerClass = async (req, res) => {

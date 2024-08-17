@@ -1,9 +1,7 @@
-// "use client"
-
+import React from 'react';
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm, useFieldArray } from "react-hook-form";
 import { z } from "zod";
-
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -14,9 +12,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-
 import { Input } from "@/components/ui/input";
-
 import {
     Select,
     SelectContent,
@@ -24,19 +20,16 @@ import {
     SelectTrigger,
     SelectValue,
   } from "@/components/ui/select"
-import { Card, CardTitle } from "../ui/card";
+import { Card, CardTitle } from "@/components/ui/card";
 import axios from "axios";
-
-
-  
 
 const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
 
 const scheduleSchema = z.array(
   z.object({
-    day: z.string().nonempty("Day is required"), // Validates that day is a non-empty string
-    start_time: z.string().nonempty("Start time is required"), // Validates that start_time is a non-empty string
-    end_time: z.string().nonempty("End time is required"), // Validates that end_time is a non-empty string
+    day: z.string().nonempty("Day is required"),
+    start_time: z.string().nonempty("Start time is required"),
+    end_time: z.string().nonempty("End time is required"),
   })
 );
 
@@ -54,8 +47,10 @@ const formSchema = z.object({
   price: z.string({
     message: "The price needs to be a number"
   }),
-//   recurring: z.boolean("Please select if the class is recurring"),
   schedule: scheduleSchema,
+  textBook: z.instanceof(File, {
+    message: "Text Book should be a file"
+  })
 });
 
 function CourseCreateForm() {
@@ -64,6 +59,7 @@ function CourseCreateForm() {
     defaultValues: {
       title: "",
       schedule: [{ day: "", start_time: "", end_time: "" }],
+      textBook: null
     },
   });
 
@@ -74,158 +70,196 @@ function CourseCreateForm() {
 
   const { register, handleSubmit, formState, setValue, reset } = form;
 
-  const onSubmit = async(data) => {
-    try{
-        const response = await axios.post(
-            "/api/class/create",
-            JSON.stringify(data),
-            {
-                headers: {
-                    "Content-Type": "application/json",
-                }
-            }
-        )
-        console.log(response);
-        reset()
-    } catch(err){
-        console.log(err)
+  const onSubmit = async (data) => {
+    const formData = new FormData();
+
+    for (const key in data) {
+      if (key === "textBook") {
+        formData.append(key, data[key]);
+      } else if (key === "schedule") {
+        formData.append(key, JSON.stringify(data[key]));
+      } else {
+        formData.append(key, data[key]);
+      }
+    }
+
+    try {
+      const response = await axios.post(
+        "/api/class/create",
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+      console.log(response);
+      reset();
+    } catch (err) {
+      console.log(err);
     }
   };
 
   return (
     <Card className="max-w-[1176px] mx-auto px-8 py-4 my-10">
       <CardTitle>Course Create Form</CardTitle>
-    <Form {...form}>
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
-        <FormField
-          control={form.control}
-          name="title"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Course Title</FormLabel>
-              <FormControl>
-                <Input placeholder="Title" {...field} className="max-w-[500px]"/>
-              </FormControl>
-              <FormDescription>
-                This is your public display name.
-              </FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+      <Form {...form}>
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
+          <FormField
+            control={form.control}
+            name="title"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Course Title</FormLabel>
+                <FormControl>
+                  <Input placeholder="Title" {...field} className="max-w-[500px]"/>
+                </FormControl>
+                <FormDescription>
+                  This is your public display name.
+                </FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
-        <FormField
-          control={form.control}
-          name="startDate"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Course Title</FormLabel>
-              <FormControl>
-                <Input placeholder="Start Date" {...field} type="date" className="max-w-[500px]"/>
-              </FormControl>
-              <FormDescription>
-                The day when your class starts
-              </FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+          <FormField
+            control={form.control}
+            name="startDate"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Start Date</FormLabel>
+                <FormControl>
+                  <Input placeholder="Start Date" {...field} type="date" className="max-w-[500px]"/>
+                </FormControl>
+                <FormDescription>
+                  The day when your class starts
+                </FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
-        <FormField
-          control={form.control}
-          name="description"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Description</FormLabel>
-              <FormControl>
-                <Input placeholder="Description" {...field} className="max-w-[500px]"/>
-              </FormControl>
-              <FormDescription>
-                The day when your class starts
-              </FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+          <FormField
+            control={form.control}
+            name="description"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Description</FormLabel>
+                <FormControl>
+                  <Input placeholder="Description" {...field} className="max-w-[500px]"/>
+                </FormControl>
+                <FormDescription>
+                  Description of the course
+                </FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
-        <FormField
-          control={form.control}
-          name="maxSeat"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Max Seat</FormLabel>
-              <FormControl>
-                <Input placeholder="Max Seats" {...field} type="number" className="max-w-[500px]"/>
-              </FormControl>
-              <FormDescription>
-                The maximum number of students in each class
-              </FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+          <FormField
+            control={form.control}
+            name="maxSeat"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Max Seat</FormLabel>
+                <FormControl>
+                  <Input placeholder="Max Seats" {...field} type="number" className="max-w-[500px]"/>
+                </FormControl>
+                <FormDescription>
+                  The maximum number of students in each class
+                </FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
-        <FormField
-          control={form.control}
-          name="price"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Pricing</FormLabel>
-              <FormControl>
-                <Input placeholder="Pricing" {...field} type="number" className="max-w-[500px]"/>
-              </FormControl>
-              <FormDescription>
-                The price of the class
-              </FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+          <FormField
+            control={form.control}
+            name="price"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Pricing</FormLabel>
+                <FormControl>
+                  <Input placeholder="Pricing" {...field} type="number" className="max-w-[500px]"/>
+                </FormControl>
+                <FormDescription>
+                  The price of the class
+                </FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
-        <div className="flex flex-wrap justify-start">
-        {fields.map((item, index) => (
-            
-          <FormItem key={item.id} className="px-6 py-3 w-full md:w-1/2 lg:w-1/3">
-            <FormLabel>Day</FormLabel>
-            <FormControl>
-              {/* <Input placeholder="Day" {...register(`schedule.${index}.day`)} /> */}
-              <Select
-              onValueChange={(value) => setValue(`schedule.${index}.day`, value)}
-              >
-                <SelectTrigger>
-                    <SelectValue placeholder="Day"/>
-                </SelectTrigger>
-                <SelectContent>
-                    {
-                        days.map(day=>{
-                            return <SelectItem value={day}>{day}</SelectItem>
-                        })
-                    }
-                </SelectContent>
-              </Select>
-            </FormControl>
-            <FormMessage>{formState.errors.schedule?.[index]?.day?.message}</FormMessage>
+          <FormField
+            control={form.control}
+            name="textBook"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Text Book</FormLabel>
+                <FormControl>
+                  <Input
+                    type="file"
+                    accept=".pdf"
+                    className="max-w-[500px]"
+                    onChange={(e) => {
+                      const file = e.target.files[0];
+                      if (file && /\.pdf$/i.test(file.name)) {
+                        field.onChange(file);
+                      } else {
+                        alert("Please upload a valid PDF file");
+                        e.target.value = null; // Clear the invalid file input
+                      }
+                    }}
+                  />
+                </FormControl>
+                <FormDescription>
+                  Upload the textbook for the course
+                </FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
-            <FormLabel>Start Time</FormLabel>
-            <FormControl>
-              <Input placeholder="Start Time" {...register(`schedule.${index}.start_time`)} type="time"/>
-            </FormControl>
-            <FormMessage>{formState.errors.schedule?.[index]?.start_time?.message}</FormMessage>
+          <div className="flex flex-wrap justify-start">
+            {fields.map((item, index) => (
+              <FormItem key={item.id} className="px-6 py-3 w-full md:w-1/2 lg:w-1/3">
+                <FormLabel>Day</FormLabel>
+                <FormControl>
+                  <Select
+              onValueChange={(value) => setValue(`schedule.${index}.day`, value)}                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Day"/>
+                    </SelectTrigger>
+                    <SelectContent>
+                      {days.map(day => (
+                        <SelectItem key={day} value={day}>{day}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </FormControl>
+                <FormMessage>{formState.errors.schedule?.[index]?.day?.message}</FormMessage>
 
-            <FormLabel>End Time</FormLabel>
-            <FormControl>
-              <Input placeholder="End Time" {...register(`schedule.${index}.end_time`)} type="time"/>
-            </FormControl>
-            <FormMessage>{formState.errors.schedule?.[index]?.end_time?.message}</FormMessage>
+                <FormLabel>Start Time</FormLabel>
+                <FormControl>
+                  <Input placeholder="Start Time" {...register(`schedule.${index}.start_time`)} type="time"/>
+                </FormControl>
+                <FormMessage>{formState.errors.schedule?.[index]?.start_time?.message}</FormMessage>
 
-            <Button type="button" onClick={() => remove(index)}>Remove</Button>
-          </FormItem>
-        ))}
-        </div>
+                <FormLabel>End Time</FormLabel>
+                <FormControl>
+                  <Input placeholder="End Time" {...register(`schedule.${index}.end_time`)} type="time"/>
+                </FormControl>
+                <FormMessage>{formState.errors.schedule?.[index]?.end_time?.message}</FormMessage>
 
-        <Button type="button" className="block w-full" onClick={() => append({ day: "", start_time: "", end_time: "" })}>
-          Add Schedule
-        </Button>
+                <Button type="button" onClick={() => remove(index)}>Remove</Button>
+              </FormItem>
+            ))}
+          </div>
+
+          <Button type="button" className="block w-full" onClick={() => append({ day: "", start_time: "", end_time: "" })}>
+            Add Schedule
+          </Button>
+
 
         <Button type="submit">Submit</Button>
       </form>

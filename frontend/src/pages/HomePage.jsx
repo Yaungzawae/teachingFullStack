@@ -5,12 +5,40 @@ import {
   CarouselItem,
 } from "@/components/ui/carousel"
 import TeacherCard from "@/components/customs/TeacherCard"
-import TestimonialCard from "@/components/customs/TestimonialCard"
 import { Card, CardHeader, CardContent } from "@/components/ui/card"
 import Autoplay from "embla-carousel-autoplay"
 import { useLoaderData } from "react-router-dom"
 import axios from "axios"
+import TestimonialCard from "@/components/cards/TestimonialCard"
+import { H1 } from "@/components/typography/typography"
 
+
+const testimonials = [
+  {
+    id: 1,
+    image: 'https://picsum.photos/200',
+    quote: "Amet minim mollit non deserunt ullamco est sit aliqua dolor do amet sint. Velit officia consequat duis enim velit mollit. Exercitation veniam consequat.",
+    name: "Jenny",
+    title: "Student one",
+    align: 'left'
+  },
+  {
+    id: 2,
+    image: 'https://picsum.photos/200',
+    quote: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+    name: "John",
+    title: "Student two",
+    align: 'right'
+  },
+  {
+    id: 3,
+    image: 'https://picsum.photos/200',
+    quote: "Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
+    name: "Jame",
+    title: "Student three",
+    align: 'left'
+  }
+];
 
 
 function HomePage() {
@@ -35,14 +63,14 @@ function HomePage() {
 
         <Card className="bg-pink-700 m-0 border-0">
           <CardHeader className="text-white">
-            <h1 className="text-2xl md:text-3xl text-center py-6">Meet Our Teachers</h1>
+            <H1 className="text-white my-8 text-center">Meet Our Teachers</H1>
           </CardHeader>
           <CardContent>
           <Carousel className="w-[95%] mx-auto">
             <CarouselContent>
               {teachers.map((teacher, index) => (
                 <CarouselItem key={index} className="md:basis-1/2 lg:basis-1/3 xl:basis-1/4">
-                    <TeacherCard image="https://picsum.photos/200" name={teacher.name} description={teacher.description} link={`/tr/${teacher._id}`}/>
+                    <TeacherCard image="https://picsum.photos/200" name={teacher.name} description={teacher.description} img={teacher.img} link={`/tr/${teacher._id}`}/>
                 </CarouselItem>
               ))}
             </CarouselContent>
@@ -51,7 +79,7 @@ function HomePage() {
         </Card>
 
 
-        <Card className="bg-pink-200 m-0 border-0 rounded-none">
+        {/* <Card className="bg-pink-200 m-0 border-0 rounded-none">
           <CardHeader>
             <h1 className="text-3xl text-center">Testimonials</h1>
           </CardHeader>
@@ -76,9 +104,23 @@ function HomePage() {
           </Carousel>
           </CardContent>
           
-        </Card>
+        </Card> */}
+
 
       </div>
+        <div className="p-8 max-w-[800px] mx-auto">
+          <H1 className="text-white text-center my-8">Testmonials</H1>
+      {testimonials.map(testimonial => (
+        <TestimonialCard
+          key={testimonial.id}
+          image={testimonial.image}
+          quote={testimonial.quote}
+          name={testimonial.name}
+          title={testimonial.title}
+          align={testimonial.align}
+        />
+      ))}
+    </div>
     </div>
   )
 }

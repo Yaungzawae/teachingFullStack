@@ -6,20 +6,38 @@ const jwt = require("jsonwebtoken");
 const { createCookie, getUserId } = require("../helpers/jwt");
 const bcrypt = require("bcrypt");
 const Teacher = require("../model/Teacher");
-const { default: mongoose } = require("mongoose");
+const mongoose = require('mongoose');
+
+var fs = require('fs');
+const path = require("path");
+
 
 module.exports.createTeacher = async (req, res) => {
     try {
         const salt = await bcrypt.genSalt(10);
         const hashed = await bcrypt.hash(req.body.password, salt);
 
+        const newTeacherId = new mongoose.Types.ObjectId();
+
+        const extension = path.extname(req.file.originalname)
+        console.log(extension)
+
         const newTeacher = await Teacher.create({
+            _id: newTeacherId,
             name: req.body.name,
             email: req.body.email,
             password: hashed,
-            img: req.body.img,
             description: req.body.description,
+            img: `${req.file.destination}/${newTeacherId}${extension}`
         })
+
+        fs.rename(`${req.file.path}` , `${req.file.destination}/${newTeacher._id}${extension}`, function(err){
+            if(err){
+                console.log(err)
+            }
+        } )
+
+        
 
         res.cookie("jwt", createCookie({ id: newTeacher._id, permission: "teacher" }));
         res.sendStatus(201);
@@ -79,28 +97,41 @@ module.exports.getAllTeachers = async (req, res) => {
 
 module.exports.editTeacherDetails = async (req, res) => {
 
-    console.log(req.body.description)
-
     try {
+        const extension = path.extname(req.file.originalname)
         const teacherUpdate = {};
+
+        const tr_id = getUserId(req.cookies.jwt);
 
         if (req.body.name) {
             teacherUpdate.name = req.body.name;
+        }
+
+        if (req.body.email) {
+            teacherUpdate.email = req.body.email;
         }
 
         if (req.body.description) {
             teacherUpdate.description = req.body.description;
         }
 
-        if (req.body.img) {
-            teacherUpdate.img = req.body.img;
+        if (req.file) {
+            teacherUpdate.img = `${req.file.destination}/${tr_id}${extension}`;
         }
+
+        console.log(teacherUpdate)
 
         const teacher = await Teacher.findOneAndUpdate(
             { _id: getUserId(req.cookies.jwt) },
             teacherUpdate,
-            { new: true } // This option returns the updated document
+            { new: true } 
         );
+
+        fs.rename(`${req.file.path}` , `${req.file.destination}/${tr_id}${extension}`, function(err){
+            if(err){
+                console.log(err)
+            }
+        } )
 
         return res.sendStatus(200);
     } catch (err) {
@@ -108,3 +139,29 @@ module.exports.editTeacherDetails = async (req, res) => {
     }
 }
 
+module.exports.deleteTeacher = async (req, res) => {
+    try {
+        const tr_id = req.body.teacher_id;
+
+        const teacher = await Teacher.findById(tr_id);
+
+        if (!teacher) {
+            return res.status(404).json(formatError({ teacher: "Teacher not found" }));
+        }
+
+        if (teacher.img) {
+            fs.unlink(teacher.img, (err) => {
+                if (err) {
+                    console.error(`Failed to delete image file: ${err}`);
+                }
+            });
+        }
+
+        await Teacher.deleteOne({ _id: tr_id });
+
+        return res.sendStatus(200);
+    } catch (err) {
+        console.log(err);
+        return res.status(500).json({ error: "An error occurred while deleting the teacher" });
+    }
+};

@@ -6,11 +6,15 @@ import axios from "axios";
 import PaymentDialog from "@/components/dialogs/PaymentDialog";
 import TeacherInfoCard from "@/components/cards/TeacherInfoCard";
 import CourseInfoCard from "@/components/cards/CourseInfoCard";
+import SessionInfoCard from "@/components/cards/SessionInfoCard";
+
 
 function TeacherDetailPage() {
     const [open, setOpen] = useState(false);
     const [selectedCourse, setSelectedCourse] = useState(null);;
-    const { tr_data, courses_data } = useLoaderData();
+    const { tr_data, courses_data, sessions_data } = useLoaderData();
+
+    
 
     const onBook = (course) => {
         setSelectedCourse(course);
@@ -19,7 +23,7 @@ function TeacherDetailPage() {
 
     return (
         <div className="mx-3">
-            <TeacherInfoCard tr_data={tr_data} editable={true}/>
+            <TeacherInfoCard tr_data={tr_data} editable={false}/>
 
             <div className="max-w-[900px] mx-auto">
                 <H3>Courses</H3>
@@ -30,6 +34,8 @@ function TeacherDetailPage() {
             {selectedCourse && (
                 <PaymentDialog open={open} setOpen={setOpen} selectedCourse={selectedCourse} setSelectedCourse={setSelectedCourse}/>
             )}
+
+            <SessionInfoCard sessions_data={sessions_data} bookable={true} onBook={onBook}/>
         </div>
     );
 }
@@ -56,9 +62,22 @@ export async function teacherDetailPageLoader({ params }) {
             }
         );
 
+        const session_response = await axios.post(
+            "/api/session/get",
+            {_id: params.name},
+            {
+                headers: {
+                    "Content-Type": "application/json",
+                }
+            }
+        )
+
+        console.log(session_response)
+
         return {
             tr_data: tr_response.data,
-            courses_data: courses_response.data
+            courses_data: courses_response.data,
+            sessions_data: session_response.data
         };
     } catch (err) {
         console.log(err);

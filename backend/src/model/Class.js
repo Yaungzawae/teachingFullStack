@@ -25,9 +25,10 @@ const classSchema = new mongoose.Schema({
         type: String,
         default: "booking"
     },
-    recurring: Boolean
+    recurring: Boolean,
+    text_book: String
 })
 
 const Class = mongoose.model("class", classSchema);
 
-module.exports = Class;
+module.exports = Class; 

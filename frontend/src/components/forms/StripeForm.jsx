@@ -3,7 +3,7 @@ import { CardElement, useStripe, useElements } from '@stripe/react-stripe-js';
 import axios from 'axios';
 import { Button } from "@/components/ui/button";
 
-const StripeForm = ({ courseId, onPaymentSuccess }) => {
+const StripeForm = ({ courseId, onPaymentSuccess, type }) => {
   const stripe = useStripe();
   const elements = useElements();
   const [error, setError] = useState(null);
@@ -21,7 +21,7 @@ const StripeForm = ({ courseId, onPaymentSuccess }) => {
 
     try {
       // Fetch the client secret from your backend
-      const response = await axios.post('/api/payment/stripe/register-class', { course_id: courseId });
+      const response = await axios.post('/api/payment/stripe/register-class', { course_id: courseId, type});
       const { clientSecret } = response.data;
 
       // Confirm the card payment
@@ -43,7 +43,7 @@ const StripeForm = ({ courseId, onPaymentSuccess }) => {
 
       if (paymentIntent.status === 'succeeded') {
         // Notify the backend to confirm registration
-        await axios.post('/api/payment/stripe/confirm-registration', { paymentIntentId: paymentIntent.id });
+        await axios.post('/api/payment/stripe/confirm-registration', { paymentIntentId: paymentIntent.id , type});
         onPaymentSuccess();
       }
     } catch (err) {
