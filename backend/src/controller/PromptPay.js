@@ -85,7 +85,6 @@ module.exports.confirmRegistrationPromptPay = async (req, res) => {
                 { new: true }
             );
 
-            console.log(course)
 
             if (!course) {
                 return res.status(400).json(formatError({ message: 'Cannot register, class is full or does not exist' }));

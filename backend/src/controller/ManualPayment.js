@@ -27,33 +27,21 @@ module.exports.createManualPayment = async(req, res) => {
     }
 }
 
-// module.exports.getManualPayments = async(req,  res) => {
-//     try{
-//         const payments = await Payments.find({isAccepted: null});
-//         return res.status(200).json(payments);
-//     } catch(err){
-//         console.log(err);
-//     }
-// }
-
-
 module.exports.getManualPayments = async (req, res) => {
     try {
         const groupedPayments = await Payments.aggregate([
             {
                 $group: {
-                    _id: "$isAccepted", // Group by the isAccepted field (true, false, or null)
-                    payments: { $push: "$$ROOT" } // Push the entire document to the payments array
+                    _id: "$isAccepted",
+                    payments: { $push: "$$ROOT" } 
                 }
             }
         ]);
 
-        // Initialize arrays for accepted, non-accepted, and null payments
         let acceptedPayments = [];
         let nonAcceptedPayments = [];
         let nullPayments = [];
 
-        // Iterate through the grouped results and assign them to the respective arrays
         groupedPayments.forEach(group => {
             if (group._id === true) {
                 acceptedPayments = group.payments;
@@ -64,7 +52,6 @@ module.exports.getManualPayments = async (req, res) => {
             }
         });
 
-        // Return as an object with three arrays
         return res.status(200).json([
             nullPayments,
             acceptedPayments,
@@ -84,7 +71,6 @@ module.exports.confirmManualPayment = async(req, res) => {
             message: req.body.message
         })
 
-        // const studentId = getUserId();
         const {studentId, courseId} = payment;
 
         const type = payment.type;
@@ -141,7 +127,6 @@ module.exports.confirmManualPayment = async(req, res) => {
 
             res.status(200).json(course);
 
-        // return res.status(200).json(payment);
     } catch(err) {
         console.log(err);
     }

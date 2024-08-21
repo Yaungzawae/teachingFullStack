@@ -16,9 +16,6 @@ import PromptPayForm from "../forms/PromptPayForm";
 import PayPalForm from "../forms/PayPalForm";
 
 
-
-
-
 const StripePromise = loadStripe("pk_test_51PjKPlRqzH8ZQ7Mc9KaWLMTlOxGPNwHJ4VQ68auhcbHNAmQwHwzsufd3g7J4A4nP83pkXsGlcnv38YRmXJa1v6nR00L1Eq960z");
 
 
@@ -64,7 +61,7 @@ const PaymentDialog = ({open, setOpen, selectedCourse, setSelectedCourse}) => {
                                 <TabsTrigger value="wise">Wise</TabsTrigger>
                             </TabsList>
                             <TabsContent value="paypal">
-                                <PayPalForm/>
+                                <PayPalForm courseId={selectedCourse._id} price={selectedCourse.price} type={type} onPaymentSuccess={handlePaymentSuccess}/>
                             </TabsContent>
                             <TabsContent value="stripe">
                                 <Elements stripe={StripePromise}>

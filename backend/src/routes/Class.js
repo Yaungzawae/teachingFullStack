@@ -37,10 +37,4 @@ Router.post("/register-class", registerClass);
 
 Router.post("/confirm-registration", confirmRegistration);
  
- 
-
-// Router.post("/login", userValidator, handleValidatorError, loginUser);
-
-// Router.post("/getOtp", getOtp);c
-
 module.exports = Router; 

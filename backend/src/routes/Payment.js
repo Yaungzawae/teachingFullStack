@@ -4,6 +4,7 @@ const { registerClassStripe, confirmRegistrationStripe } = require("../controlle
 const { isStudent, validateCookie } = require("../middlewares/validateCookie");
 const path = require("path");
 const { confirmRegistrationPromptPay, registerClassPromptPay } = require("../controller/PromptPay");
+const { registerPayPal, confirmRegistrationPayPal } = require("../controller/Paypal");
 
 
 
@@ -39,5 +40,9 @@ Router.post("/manual/confirm", confirmManualPayment);
 
 Router.post("/manual/deny", denylManualPayment);
 
+Router.post("/paypal/register", validateCookie, isStudent, registerPayPal);
 
-module.exports = Router;
+Router.post("/paypal/confirm", validateCookie, isStudent, confirmRegistrationPayPal)
+
+
+module.exports = Router; 

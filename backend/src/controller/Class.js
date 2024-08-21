@@ -47,7 +47,6 @@ module.exports.deleteClass = async (req, res) => {
 
 module.exports.getStudents = async (req, res) => {
     try {
-        // const course = await Student.find({ class_id: req.body.class_id });
         console.log(req.body.students)
         const students = await User.find({
             _id: { $in: req.body.students}
