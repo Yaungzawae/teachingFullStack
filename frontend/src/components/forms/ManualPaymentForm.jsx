@@ -14,7 +14,7 @@ const formSchema = z.object({
     })
 });
 
-const ManualPaymentForm = ({ courseId, price, type, onPaymentSuccess }) => {
+const ManualPaymentForm = ({ courseId, price, type, onPaymentSuccess, paymentMethod }) => {
     const [error, setError] = useState(null);
     const form = useForm({
         resolver: zodResolver(formSchema),
@@ -29,7 +29,7 @@ const ManualPaymentForm = ({ courseId, price, type, onPaymentSuccess }) => {
         setError(null);
         const formData = new FormData();
         formData.append("courseId", courseId);
-        formData.append("price", price);
+        formData.append("amount", price);
         formData.append("type", type);
         formData.append("img", data.img);
 
@@ -53,9 +53,10 @@ const ManualPaymentForm = ({ courseId, price, type, onPaymentSuccess }) => {
 
     return (
         <Form {...form}>
-            <h2 className="my-3">
-                For Wise, please transfer to this account: <b>012345678</b>
-            </h2>
+            {paymentMethod == "wise" ? 
+            <h2 className="my-3">For Wise, please transfer to this account: <b>012345678</b></h2> :
+            <h2 className="my-3">For Taiwan, please transfer to this account: <b>012345678</b></h2> 
+            }
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-8 max-w-[500px] mx-auto">
                 <FormField
                     control={form.control}

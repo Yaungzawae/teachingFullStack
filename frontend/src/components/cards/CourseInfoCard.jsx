@@ -150,11 +150,6 @@ const CourseInfoCard = ({ courses_data, editable = false, bookable = false, onBo
           </React.Fragment>
         ))}
       </CardContent>
-      {bookable && (
-        <CardFooter>
-          <Button className="bg-pink-900">Contact Teacher</Button>
-        </CardFooter>
-      )}
     </Card>
   );
 };

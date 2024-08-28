@@ -25,7 +25,7 @@ const UserHoverCard = ({ userId }) => {
   return (
     <div className="p-4">
       <Card className="bg-white shadow-md rounded-lg p-4 cursor-pointer" onClick={fetchUserDetails}>
-        <h2 className="text-xl font-bold mb-2">User ID: {userId}</h2>
+        <h2 className="text-xl font-bold mb-2">Click to the see the student details</h2>
         {loading && <p className="text-gray-500">Loading...</p>}
         {error && <p className="text-red-500">{error}</p>}
         {userDetails && (

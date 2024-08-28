@@ -5,7 +5,7 @@ const cookieParser = require("cookie-parser");
 
 const authRoute = require("./routes/Auth.js");
 const teacherAuth = require("./routes/Teacher.js")
-const sessionRoute = require("./routes/session.js");
+const sessionRoute = require("./routes/Session.js");
 
 const classRoute = require("./routes/Class.js");
 const paymentRoute = require("./routes/Payment.js");

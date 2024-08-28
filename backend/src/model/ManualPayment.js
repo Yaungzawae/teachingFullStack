@@ -5,6 +5,10 @@ const PaymentSchema  = new mongoose.Schema({
     studentId: String,
     type: String,
     amount: Number,
+    paymentMethod: {
+        type: String,
+        default: "Manual"
+    },
     isAccepted: {
         type: Boolean,
         default: null
@@ -14,7 +18,5 @@ const PaymentSchema  = new mongoose.Schema({
 })
 
 const Payments = mongoose.model("payments", PaymentSchema);
-
-
 
 module.exports = Payments;

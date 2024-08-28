@@ -23,6 +23,7 @@ const formSchema = z.object({
     message: "Name cannot be empty",
   }),
   description: z.string().optional(),
+  contact: z.string(),
   password: z.string().optional(),
   img: z.instanceof(File).optional(),
 });
@@ -147,6 +148,20 @@ function TeacherCreateForm({ defaultValues, onCancel }) {
                   <Input placeholder="Description" {...field} className="max-w-[500px]" />
                 </FormControl>
                 <FormDescription>Please enter the description about the teacher</FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="contact"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Contact</FormLabel>
+                <FormControl>
+                  <Input placeholder="Line" {...field} className="max-w-[500px]" />
+                </FormControl>
+                <FormDescription>Please enter the Line URL of the teacher</FormDescription>
                 <FormMessage />
               </FormItem>
             )}

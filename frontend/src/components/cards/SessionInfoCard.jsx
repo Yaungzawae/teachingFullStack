@@ -32,7 +32,6 @@ const SessionInfoCard = ({ sessions_data, editable = false, bookable = false, on
           },
         }
       );
-      // Optionally refresh the sessions list or remove the deleted session from the state
       setShowDeleteConfirm(false);
       setCourseToDelete(null);
     } catch (err) {
@@ -96,11 +95,6 @@ const SessionInfoCard = ({ sessions_data, editable = false, bookable = false, on
           </React.Fragment>
         ))}
       </CardContent>
-      {bookable && (
-        <CardFooter>
-          <Button className="bg-pink-900">Contact Teacher</Button>
-        </CardFooter>
-      )}
     </Card>
   );
 };

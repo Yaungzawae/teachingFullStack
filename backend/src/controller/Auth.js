@@ -90,3 +90,18 @@ module.exports.getOtp = async (req, res) =>{
         console.log(err)
     }
 }
+
+module.exports.adminLogin = async(req, res) => {
+    try{
+        const adminPass = process.env.ADMIN_PASSWORD;
+        if(req.body.password == adminPass){
+            console.log(adminPass, req.body.password, adminPass == req.body.password);
+            res.cookie("jwt", createCookie({permission: "admin"}));
+            return res.sendStatus(200);
+        } else {
+            return res.status(401).json(formatError({message: "Wrorng Password"}))
+        }
+    } catch(err) {
+        console.log(err);
+    }
+}

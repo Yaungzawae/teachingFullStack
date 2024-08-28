@@ -17,7 +17,8 @@ const teacherSchema = new mongoose.Schema({
         required: true
     },
     img: String,
-    description: String
+    description: String,
+    contact: String
 })
 
 teacherSchema.plugin(mongooseUniqueValidator,{ message: 'Duplicate {PATH}. Please select another one.' });

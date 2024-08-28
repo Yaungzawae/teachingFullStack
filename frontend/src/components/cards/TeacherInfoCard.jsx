@@ -9,7 +9,7 @@ import { Button } from "../ui/button";
 import axios from "axios";
 import { Dialog, DialogTrigger, DialogContent, DialogTitle, DialogDescription, DialogFooter } from "../ui/dialog";
 
-const TeacherInfoCard = ({ tr_data, isEditable, isDeleteable }) => {
+const TeacherInfoCard = ({ tr_data, isEditable, isDeleteable, fullScreen=false }) => {
     const [isEditing, setIsEditing] = useState(false);
     const [isDialogOpen, setIsDialogOpen] = useState(false);
 
@@ -22,14 +22,16 @@ const TeacherInfoCard = ({ tr_data, isEditable, isDeleteable }) => {
             await axios.post("/api/teacher/delete", {
                 teacher_id: tr_data._id,
             });
-            setIsDialogOpen(false); // Close the dialog after deletion
+            setIsDialogOpen(false);
         } catch (err) {
-            console.log(err);
+            console.log(err.response.data.errors.messaage);
         }
     };
 
+    const style = fullScreen ? "" : "max-w-[1176px]"
+
     return (
-        <Card className="max-w-[900px] mx-auto px-8 py-4 my-10">
+        <Card className={`${style} mx-auto px-8 py-4 my-10`}>
             <div className="flex">
                 <img 
                     width="125px" 
@@ -54,7 +56,7 @@ const TeacherInfoCard = ({ tr_data, isEditable, isDeleteable }) => {
                         </div>
                         <div className="flex flex-col sm:flex-row justify-center items-center">
                             <FontAwesomeIcon icon={faMessage} className="text-yellow-500 text-lg mr-1" />
-                            <span>99.9%</span>
+                            <span>99.9%</span>  
                         </div>
                     </div>
                     {isEditable && (
@@ -65,6 +67,10 @@ const TeacherInfoCard = ({ tr_data, isEditable, isDeleteable }) => {
                             <FontAwesomeIcon icon={faEdit} />
                         </button>
                     )}
+                    <Button className="bg-pink-900 hover:bg-pink-800 my-2">
+                        <a className="w-full p-full" href={tr_data.contact} target="_blank" rel="noopener noreferrer">Contact</a>
+
+                    </Button>
                 </div>
             </div>
 

@@ -10,12 +10,15 @@ import StudentRegisterPage from "./pages/Auth/StudentRegisterPage";
 import TeacherDetailPage, {teacherDetailPageLoader} from "./pages/TeacherDetailPage";
 import TeacherHomePage, { teacherHomePageLoader } from "./pages/teacher/teacherHomePage";
 import AdminPage from "./pages/Admin/AdminPage";
+import ProfilePage, { ProfilePageLoader } from "./pages/Profile/ProfilePage";
+import ErrorPage from "./pages/Error/ErrorPage";
 
 
 const router = createBrowserRouter([
   {
     path: "/",
     element: <Template/>,
+    errorElement: <ErrorPage/>,
     children: [
       {
         path: "/",
@@ -37,6 +40,11 @@ const router = createBrowserRouter([
       {
         path: "/register",
         element: <StudentRegisterPage/>
+      },
+      {
+        path: "/profile",
+        element: <ProfilePage/>,
+        loader: ProfilePageLoader
       },
       {
         path: "/tr/:name",

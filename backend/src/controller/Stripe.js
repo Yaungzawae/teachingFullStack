@@ -8,6 +8,7 @@ const User = require('../model/User');
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 const ejs = require("ejs");
 const Session = require('../model/Session');
+const Payments = require('../model/ManualPayment');
 
 
 module.exports.registerClassStripe = async (req, res) => {
@@ -86,15 +87,24 @@ module.exports.confirmRegistrationStripe = async (req, res) => {
                 { new: true }
             );
 
+            
             if (!course) {
                 return res.status(400).json(formatError({ message: 'Cannot register, class is full or does not exist' }));
             }
-        
+            
+            
 
             const student = await User.findOne({_id: student_id});
 
-            console.log(student, "AAAAAA")
-            console.log(student.email)
+            const payment = await Payments.create({
+                studentId: student_id,
+                courseId: course_id,
+                isAccepted: true,
+                amount: course.price,
+                type: type,
+                paymentMethod: "Stripe"
+            })
+
 
             const html = await ejs.renderFile(
                 path.join(__dirname, "../views/templates/courseRegisterationTemplate.ejs"),

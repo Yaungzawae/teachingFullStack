@@ -104,3 +104,13 @@ module.exports.confirmSessionRegistration = async (req, res) => {
         res.status(500).json({ message: 'Server error' });
     }
 }
+
+module.exports.getOneSession = async(req, res)=>{
+    try{
+        const session = await Session.findById(req.body._id);
+        res.status(200).json(session);
+    } catch(err) {
+        console.log(err);
+        res.status(500).json({ message: 'Server error' });
+    }
+}

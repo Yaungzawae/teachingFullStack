@@ -180,3 +180,13 @@ module.exports.confirmRegistration = async (req, res) => {
         res.status(500).json({ message: 'Server error' });
     }
 }
+
+module.exports.getOneClass = async(req, res)=>{
+    try{
+        const foundClass = await Class.findById(req.body._id);
+        res.status(200).json(foundClass);
+    } catch(err) {
+        console.log(err);
+        res.status(500).json({ message: 'Server error' });
+    }
+}

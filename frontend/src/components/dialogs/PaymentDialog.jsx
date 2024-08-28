@@ -59,6 +59,7 @@ const PaymentDialog = ({open, setOpen, selectedCourse, setSelectedCourse}) => {
                                 <TabsTrigger value="stripe">Stripe</TabsTrigger>
                                 <TabsTrigger value="promptpay">PromptPay</TabsTrigger>
                                 <TabsTrigger value="wise">Wise</TabsTrigger>
+                                <TabsTrigger value="taiwanpay">Taiwan Post</TabsTrigger>
                             </TabsList>
                             <TabsContent value="paypal">
                                 <PayPalForm courseId={selectedCourse._id} price={selectedCourse.price} type={type} onPaymentSuccess={handlePaymentSuccess}/>
@@ -69,7 +70,10 @@ const PaymentDialog = ({open, setOpen, selectedCourse, setSelectedCourse}) => {
                                 </Elements>
                             </TabsContent>
                             <TabsContent value="wise">
-                                <ManualPaymentForm courseId={selectedCourse._id} price={selectedCourse.price} type={type} onPaymentSuccess={handlePaymentSuccess}/>
+                                <ManualPaymentForm courseId={selectedCourse._id} price={selectedCourse.price} type={type} onPaymentSuccess={handlePaymentSuccess} paymentMethod="wise"/>
+                            </TabsContent>
+                            <TabsContent value="taiwanpay">
+                                <ManualPaymentForm courseId={selectedCourse._id} price={selectedCourse.price} type={type} onPaymentSuccess={handlePaymentSuccess} paymentMethod="taiwanpay"/>
                             </TabsContent>
                             <TabsContent value="promptpay">
                                 <Elements stripe={StripePromise}>

@@ -1,6 +1,6 @@
 
 const path = require("path");
-const { createClass, getAllClassesOfTeacher, registerClass, confirmRegistration, editClass, getStudents, deleteClass } = require("../controller/Class");
+const { createClass, getAllClassesOfTeacher, registerClass, confirmRegistration, editClass, getStudents, deleteClass, getOneClass } = require("../controller/Class");
 const { isTeacher } = require("../middlewares/validateCookie");
 
 const multer = require("multer");
@@ -36,5 +36,7 @@ Router.post("/delete-class", isTeacher, deleteClass);
 Router.post("/register-class", registerClass);
 
 Router.post("/confirm-registration", confirmRegistration);
+
+Router.post("/get-one", getOneClass);
  
 module.exports = Router; 

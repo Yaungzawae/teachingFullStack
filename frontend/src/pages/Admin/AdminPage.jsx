@@ -2,11 +2,50 @@ import ManualPaymentCard from "@/components/cards/ManualPaymentCard";
 import TeacherInfoCard from "@/components/cards/TeacherInfoCard";
 import TeacherCreateForm from "@/components/forms/TeacherCreateForm";
 import { H1, H3 } from "@/components/typography/typography";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import axios from "axios";
 import { useEffect, useState } from "react";
 
+
+
+const PasswordPrompt = ({ onSuccess }) => {
+    const [password, setPassword] = useState('');
+    const [error, setError] = useState('');
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        try {
+            const response = await axios.post('/api/auth/admin-login', { password });
+            onSuccess();
+
+        } catch (err) {
+            setError(err.response.data.errors.message);
+            console.log(err.response.data.errors.message);        
+        }
+    };
+
+    return (
+        <div className="flex flex-col items-center justify-center h-screen">
+            <form onSubmit={handleSubmit} className="p-6 bg-white shadow-md rounded-md">
+                <h2 className="text-2xl mb-4">Enter Admin Password</h2>
+                <Input
+                    type="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    className="mb-4"
+                    placeholder="Password"
+                />
+                {error && <p className="text-red-500 mb-4">{error}</p>}
+                <Button type="submit" className="w-full">Submit</Button>
+            </form>
+        </div>
+    );
+};
+
 const AdminPage = () => {
+    const [isAuthorized, setIsAuthorized] = useState(false);
     const [[pending, accepted, denied], setData] = useState([[], [], []]);
     const [teachers, setTeachers] = useState([]);
 
@@ -15,28 +54,21 @@ const AdminPage = () => {
             const response = await axios.post("/api/payment/manual/get");
             const response2 = await axios.post("/api/teacher/get-all-teachers")
             setData(response.data);
-            setTeachers(response2.data)
+            setTeachers(response2.data);
         } catch (error) {
             console.error("Error fetching data:", error);
         }
     };
 
     useEffect(() => {
-        fetchData();
-    }, []);
-
-    const send = async (payment_id, type) => {
-        try {
-            await axios.post(
-                `/api/payment/manual/${type}`,
-                { payment_id },
-                { headers: { "Content-Type": "application/json" } }
-            );
+        if (isAuthorized) {
             fetchData();
-        } catch (error) {
-            console.error("Error sending data:", error);
         }
-    };
+    }, [isAuthorized]);
+
+    if (!isAuthorized) {
+        return <PasswordPrompt onSuccess={() => setIsAuthorized(true)} />;
+    }
 
     return (
         <div className="container mx-auto px-4">
@@ -89,7 +121,7 @@ const AdminPage = () => {
 
                 <TabsContent value="teachers">
                     {teachers.map(teacher => {
-                        return <TeacherInfoCard isEditable={false} isDeleteable={true} tr_data={teacher}/>
+                        return <TeacherInfoCard isEditable={false} isDeleteable={true} tr_data={teacher} />
                     })}
                 </TabsContent>
 

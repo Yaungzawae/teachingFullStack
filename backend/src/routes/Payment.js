@@ -1,5 +1,5 @@
 const multer = require("multer");
-const { createManualPayment, getManualPayments, confirmManualPayment, denylManualPayment } = require("../controller/ManualPayment");
+const { createManualPayment, getManualPayments, confirmManualPayment, denylManualPayment, getPaymentsOfUser } = require("../controller/ManualPayment");
 const { registerClassStripe, confirmRegistrationStripe } = require("../controller/Stripe");
 const { isStudent, validateCookie } = require("../middlewares/validateCookie");
 const path = require("path");
@@ -43,6 +43,8 @@ Router.post("/manual/deny", denylManualPayment);
 Router.post("/paypal/register", validateCookie, isStudent, registerPayPal);
 
 Router.post("/paypal/confirm", validateCookie, isStudent, confirmRegistrationPayPal)
+
+Router.post("/get", validateCookie, isStudent, getPaymentsOfUser);
 
 
 module.exports = Router; 

@@ -109,7 +109,6 @@ module.exports.confirmManualPayment = async(req, res) => {
                 return res.status(400).json(formatError({ message: 'Cannot register, class is full or does not exist' }));
             }
         
-
             const student = await User.findOne({_id: studentId});
 
             console.log(student, "AAAAAA")
@@ -124,7 +123,6 @@ module.exports.confirmManualPayment = async(req, res) => {
             ];
             
             sendMail(student.email, "Class Registeration", html, attachments);
-
             res.status(200).json(course);
 
     } catch(err) {
@@ -144,3 +142,12 @@ module.exports.denylManualPayment = async(req, res) => {
         console.log(err);
     }
 }
+
+module.exports.getPaymentsOfUser = async(req, res) => {
+    try{
+        const payments = await Payments.find({studentId: getUserId(req.cookies.jwt)});
+        return res.status(200).json(payments);
+    } catch(err){
+        console.log(err);
+    }
+}  

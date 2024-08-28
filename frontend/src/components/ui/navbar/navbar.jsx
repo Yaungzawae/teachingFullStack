@@ -1,52 +1,86 @@
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
-import { faBars } from "@fortawesome/free-solid-svg-icons"
+import { useState, useEffect } from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faBars } from "@fortawesome/free-solid-svg-icons";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@/components/ui/popover"
-
+} from "@/components/ui/popover";
 import {
   HoverCard,
   HoverCardContent,
   HoverCardTrigger,
-} from "@/components/ui/hover-card"
-
-import { Separator } from "@/components/ui/separator"
-
-
-
-import logo from "../../../assets/logo.png"
-import bg from "../../../assets/nav-bg.jpg"
-import { Link } from "react-router-dom"
+} from "@/components/ui/hover-card";
+import { Separator } from "@/components/ui/separator";
+import logo from "../../../assets/logo.png";
+import { Link } from "react-router-dom";
 
 function NavBar() {
+  const [language, setLanguage] = useState("en");
+
+  useEffect(() => {
+    const storedLanguage = localStorage.getItem("language");
+    if (storedLanguage) {
+      setLanguage(storedLanguage);
+    }
+  }, []);
+
+  const handleLanguageChange = (lang) => {
+    setLanguage(lang);
+    localStorage.setItem("language", lang);
+    window.location.reload(false);
+  };
+
+  const currentLang = localStorage.getItem("language");
 
   return (
-    <div className="w-full h-[10vh] min-h-28  bg-[url('./assets/nav-bg.jpg')] bg-cover bg-repeat-x bg-center ">
+    <div className="w-full h-[10vh] min-h-28 bg-[url('./assets/nav-bg.jpg')] bg-cover bg-repeat-x bg-center">
       <div className="max-w-[1200px] h-[10vh] min-h-28 mx-auto flex flex-row justify-between text-white">
-
         <Link to="/" className="ml-4 max-w-24 my-auto">
           <img src={logo} />
         </Link>
 
         <div className="my-auto flex-row gap-5 mr-4 text-lg hidden sm:flex">
-
-          <Link to="./classes"> Classes </Link>
+          <Link to="./profile">
+            {currentLang === "en" ? "Profile" : "个人资料"}
+          </Link>
           <Separator orientation="vertical" className="bg-white text-white h-auto" />
-          <Link to="./classes"> Others </Link>
 
-          <Separator orientation="vertical" className="bg-white text-white h-auto" />
           <HoverCard openDelay="10ms" closeDelay="200">
-            <HoverCardTrigger className="select-none cursor-pointer">Account</HoverCardTrigger>
+            <HoverCardTrigger className="select-none cursor-pointer">
+              {currentLang === "en" ? "Account" : "账户"}
+            </HoverCardTrigger>
             <HoverCardContent className="flex flex-col gap-2 text-center">
-              <Link to="/login/teacher">Login for Teachers</Link>
+              <Link to="/login/teacher">
+                {currentLang === "en" ? "Login for Teachers" : "教师登录"}
+              </Link>
               <Separator className="bg-black my-1" />
-              <Link to="/login">Login For Students</Link>
+              <Link to="/login">
+                {currentLang === "en" ? "Login For Students" : "学生登录"}
+              </Link>
               <Separator />
-              <Link to="/register">Register For Students</Link>
+              <Link to="/register">
+                {currentLang === "en" ? "Register For Students" : "学生注册"}
+              </Link>
             </HoverCardContent>
           </HoverCard>
+        </div>
+
+        {/* Language Selection */}
+        <div className="my-auto flex gap-2">
+          <button
+            onClick={() => handleLanguageChange("en")}
+            className={`text-lg ${language === "en" ? "font-bold" : ""}`}
+          >
+            {currentLang === "en" ? "English" : "英文"}
+          </button>
+          <Separator orientation="vertical" className="bg-white text-white h-auto" />
+          <button
+            onClick={() => handleLanguageChange("zh")}
+            className={`text-lg ${language === "zh" ? "font-bold" : ""}`}
+          >
+            {currentLang === "en" ? "Chinese" : "中文"}
+          </button>
         </div>
 
         <div className="my-auto mr-4 block sm:hidden">
@@ -57,24 +91,36 @@ function NavBar() {
             <PopoverContent className="w-28">
               <div className="flex flex-col gap-3 text-center">
                 <Popover openDelay="10ms" closeDelay="200">
-                  <PopoverTrigger className="select-none cursor-pointer">Account</PopoverTrigger>
+                  <PopoverTrigger className="select-none cursor-pointer">
+                    {currentLang === "en" ? "Account" : "账户"}
+                  </PopoverTrigger>
                   <PopoverContent className="flex flex-col gap-2 text-center">
-                    <Link to="/login/teacher">Login for Teachers</Link>
+                    <Link to="/login/teacher">
+                      {currentLang === "en" ? "Login for Teachers" : "教师登录"}
+                    </Link>
                     <Separator className="bg-black my-1" />
-                    <Link to="/login">Login For Students</Link>
+                    <Link to="/login">
+                      {currentLang === "en" ? "Login For Students" : "学生登录"}
+                    </Link>
                     <Separator />
-                    <Link to="/register">Register For Students</Link>
+                    <Link to="/register">
+                      {currentLang === "en" ? "Register For Students" : "学生注册"}
+                    </Link>
                   </PopoverContent>
                 </Popover>
-                <a href="./">Link 2</a>
-                <a href="./">Link 3</a>
+                <a href="./">
+                  {currentLang === "en" ? "Link 2" : "链接 2"}
+                </a>
+                <a href="./">
+                  {currentLang === "en" ? "Link 3" : "链接 3"}
+                </a>
               </div>
             </PopoverContent>
           </Popover>
         </div>
       </div>
     </div>
-  )
+  );
 }
 
 export default NavBar;

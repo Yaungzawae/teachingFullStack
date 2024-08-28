@@ -28,6 +28,7 @@ module.exports.createTeacher = async (req, res) => {
             email: req.body.email,
             password: hashed,
             description: req.body.description,
+            contact: req.body.contact,
             img: `${req.file.destination}/${newTeacherId}${extension}`
         })
 
@@ -74,9 +75,11 @@ module.exports.loginTeacher = async (req, res) => {
 module.exports.getOneTeacher = async (req, res) => {
 
     const id = req.body._id ? req.body._id : getUserId(req.cookies.jwt);
+    console.log(req.body._id);
 
     try {
         const oneDetail = await Teacher.findOne({ _id: new mongoose.Types.ObjectId(id) });
+        console.log(oneDetail)
         return res.status(200).json(oneDetail);
     } catch (err) {
         console.log(err);
