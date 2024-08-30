@@ -233,8 +233,6 @@ const RegisterForm = ({ type }) => {
                     )}
                 />
 
-
-
                 <Button type="submit" className="block mx-auto px-8 bg-pink-700 hover:bg-pink-800">Submit</Button>
                 {type == "student" && (
                     <Link to="/login" className="text-center">

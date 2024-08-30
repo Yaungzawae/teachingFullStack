@@ -63,7 +63,7 @@ const CourseInfoCard = ({ courses_data, editable = false, bookable = false, onBo
       console.error(err);
     }
   };
-
+  const currentLang = localStorage.getItem("language");
   return (
     <Card className="max-w-[1176px] mx-auto px-8 py-4 my-10">
       <CardContent className="flex flex-col gap-x-8 gap-y-1">
@@ -79,42 +79,44 @@ const CourseInfoCard = ({ courses_data, editable = false, bookable = false, onBo
               <>
                 <div className="flex justify-between items-center">
                   <div className="max-w-[66%]">
-                    <H3>{course.title}</H3>
-                    <Muted>{course.description}</Muted>
+                    <H3>{currentLang == "en" ? course.title : course.title}</H3>
+                    <Muted>{currentLang == "en" ? course.description : course.description}</Muted>
                     <div className="my-4">
                       {course.schedule.map((s) => (
                         <div className="my-2" key={s._id}>
                           <H4>
-                            {s.day} - {s.start_time} to {s.end_time}
+                            {currentLang == "en" ? `${s.day} - ${s.start_time} to ${s.end_time}` : `${s.day} - ${s.start_time} 到 ${s.end_time}`}
                           </H4>
                         </div>
                       ))}
                     </div>
                   </div>
                   <div>
-                    <H4>{course.price}$</H4>
+                    <H4>{currentLang == "en" ? `${course.price}$` : `${course.price}$`}</H4>
                     <FontAwesomeIcon icon={faChair} />
-                    <label>{course.booked_seat} / {course.max_seat}</label>
+                    <label>{currentLang == "en" ? `${course.booked_seat} / ${course.max_seat}` : `${course.booked_seat} / ${course.max_seat}`}</label>
                   </div>
                 </div>
                 {editable && (
                   <div className="mb-6 flex gap-4">
-                    <Button onClick={() => onEdit(course)}>Edit</Button>
+                    <Button onClick={() => onEdit(course)}>
+                      {currentLang == "en" ? "Edit" : "編輯"}
+                    </Button>
                     <Dialog open={showStudents} onOpenChange={setShowStudents}>
                       <DialogTrigger asChild>
                         <Button onClick={() => viewStudents(course.students)}>
-                          View Students
+                          {currentLang == "en" ? "View Students" : "查看學生"}
                         </Button>
                       </DialogTrigger>
                       <DialogContent>
                         <DialogHeader>
-                          <DialogTitle>Students Enrolled</DialogTitle>
+                          <DialogTitle>{currentLang == "en" ? "Students Enrolled" : "已註冊的學生"}</DialogTitle>
                         </DialogHeader>
                         <div className="space-y-2">
                           {students.map((student) => (
                             <div key={student._id} className="flex flex-col">
-                              <H4>{student.name}</H4>
-                              <Muted>{student.email}</Muted>
+                              <H4>{currentLang == "en" ? student.name : student.name}</H4>
+                              <Muted>{currentLang == "en" ? student.email : student.email}</Muted>
                             </div>
                           ))}
                         </div>
@@ -122,17 +124,23 @@ const CourseInfoCard = ({ courses_data, editable = false, bookable = false, onBo
                     </Dialog>
                     <Dialog open={showDeleteConfirm} onOpenChange={setShowDeleteConfirm}>
                       <DialogTrigger asChild>
-                        <Button onClick={() => confirmDelete(course._id)}>Delete</Button>
+                        <Button onClick={() => confirmDelete(course._id)}>
+                          {currentLang == "en" ? "Delete" : "刪除"}
+                        </Button>
                       </DialogTrigger>
                       <DialogContent>
                         <DialogHeader>
-                          <DialogTitle>Confirm Deletion</DialogTitle>
+                          <DialogTitle>{currentLang == "en" ? "Confirm Deletion" : "確認刪除"}</DialogTitle>
                         </DialogHeader>
                         <div className="space-y-2">
-                          <p>Are you sure you want to delete this course?</p>
+                          <p>{currentLang == "en" ? "Are you sure you want to delete this course?" : "您確定要刪除此課程嗎？"}</p>
                           <div className="flex justify-end gap-4">
-                            <Button variant="outline" onClick={() => setShowDeleteConfirm(false)}>Cancel</Button>
-                            <Button variant="destructive" onClick={onDelete}>Delete</Button>
+                            <Button variant="outline" onClick={() => setShowDeleteConfirm(false)}>
+                              {currentLang == "en" ? "Cancel" : "取消"}
+                            </Button>
+                            <Button variant="destructive" onClick={onDelete}>
+                              {currentLang == "en" ? "Delete" : "刪除"}
+                            </Button>
                           </div>
                         </div>
                       </DialogContent>
@@ -141,7 +149,7 @@ const CourseInfoCard = ({ courses_data, editable = false, bookable = false, onBo
                 )}
                  {
                     bookable &&  <div className="mb-6">
-                        <Button className="bg-green-600 hover:bg-green-700 mr-2 w-auto" onClick={() => onBook(course)}>Enroll Now</Button>
+                        <Button className="bg-green-600 hover:bg-green-700 mr-2 w-auto" onClick={() => onBook(course)}>{currentLang == "en" ? "Enroll" : "報名"}</Button>
                     </div>
                     }
               </>
@@ -150,6 +158,11 @@ const CourseInfoCard = ({ courses_data, editable = false, bookable = false, onBo
           </React.Fragment>
         ))}
       </CardContent>
+      {bookable && (
+        <CardFooter>
+          <Button className="bg-pink-900">{currentLang == "en" ? "Contact Teacher" : "聯繫教師"}</Button>
+        </CardFooter>
+      )}
     </Card>
   );
 };

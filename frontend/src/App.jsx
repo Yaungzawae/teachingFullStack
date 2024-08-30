@@ -12,6 +12,7 @@ import TeacherHomePage, { teacherHomePageLoader } from "./pages/teacher/teacherH
 import AdminPage from "./pages/Admin/AdminPage";
 import ProfilePage, { ProfilePageLoader } from "./pages/Profile/ProfilePage";
 import ErrorPage from "./pages/Error/ErrorPage";
+import ForgotPasswordPage from "./pages/Auth/ForgotPasswordPage";
 
 
 const router = createBrowserRouter([
@@ -36,6 +37,10 @@ const router = createBrowserRouter([
       {
         path: "/login/teacher",
         element: <TeacherLoginPage/>
+      },
+      {
+        path: "/forgot-password",
+        element: <ForgotPasswordPage/>
       },
       {
         path: "/register",

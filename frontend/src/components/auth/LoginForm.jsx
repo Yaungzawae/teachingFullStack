@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Fragment } from "react";
 import {
     Form,
     FormControl,
@@ -111,9 +111,15 @@ const LoginForm = ({ type }) => {
                 />
                 <Button type="submit" className="block mx-auto px-8 bg-pink-700 hover:bg-pink-800">Submit</Button>
                 {type === "student" && (
-                    <Link to="/register" className="text-center">
-                        <p className="mt-4 underline">Don't Have An Account? Create One!</p>
-                    </Link>
+                    <Fragment>
+                        <Link to="/register" className="text-center">
+                            <p className="mt-4 underline">Don't Have An Account? Create One!</p>
+                        </Link>
+                        <Link to="/forgot-password" className="text-center">
+                            <p className="mt-4 underline">Forgot password?</p>
+                        </Link>
+                    </Fragment>
+                    
                 )}
             </form>
         </Form>

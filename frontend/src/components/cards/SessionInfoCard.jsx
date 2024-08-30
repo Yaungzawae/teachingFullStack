@@ -11,6 +11,7 @@ import { Button } from '../ui/button';
 import PaymentDialog from '../dialogs/PaymentDialog';
 import UserHoverCard from '../hoverCards/User';
 
+
 const SessionInfoCard = ({ sessions_data, editable = false, bookable = false, onBook }) => {
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [sessionToDelete, setCourseToDelete] = useState(null);
@@ -32,13 +33,14 @@ const SessionInfoCard = ({ sessions_data, editable = false, bookable = false, on
           },
         }
       );
+      // Optionally refresh the sessions list or remove the deleted session from the state
       setShowDeleteConfirm(false);
       setCourseToDelete(null);
     } catch (err) {
       console.error(err);
     }
   };
-
+  const lang = localStorage.getItem("language");
   return (
     <Card className="max-w-[1176px] mx-auto px-8 py-4 my-10">
       <CardContent className="flex flex-col gap-x-8 gap-y-1">
@@ -86,7 +88,7 @@ const SessionInfoCard = ({ sessions_data, editable = false, bookable = false, on
                 }
                  {
                     bookable &&  <div className="mb-6">
-                        <Button className="bg-green-600 hover:bg-green-700 mr-2 w-auto" onClick={() => onBook(session)}>Enroll Now</Button>
+                        <Button className="bg-green-600 hover:bg-green-700 mr-2 w-auto" onClick={() => onBook(session)}>  {lang == "en" ? "Enroll" : "報名"}</Button>
                     </div>
                     }
               </>
@@ -95,6 +97,11 @@ const SessionInfoCard = ({ sessions_data, editable = false, bookable = false, on
           </React.Fragment>
         ))}
       </CardContent>
+      {bookable && (
+        <CardFooter>
+          <Button className="bg-pink-900">{lang == "en" ? "Contact Teacher" : "聯繫教師"}</Button>
+        </CardFooter>
+      )}
     </Card>
   );
 };

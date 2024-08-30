@@ -14,6 +14,16 @@ import {
 import { Separator } from "@/components/ui/separator";
 import logo from "../../../assets/logo.png";
 import { Link } from "react-router-dom";
+import { Toggle } from "@/components/ui/toggle"
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet"
+
 
 function NavBar() {
   const [language, setLanguage] = useState("en");
@@ -25,9 +35,10 @@ function NavBar() {
     }
   }, []);
 
-  const handleLanguageChange = (lang) => {
-    setLanguage(lang);
-    localStorage.setItem("language", lang);
+  const handleLanguageChange = () => {
+    localStorage.setItem("language", language == "en" ? "zh" : "en");
+    setLanguage(language == "en" ? "zh" : "en");
+    console.log(language);
     window.location.reload(false);
   };
 
@@ -40,11 +51,12 @@ function NavBar() {
           <img src={logo} />
         </Link>
 
-        <div className="my-auto flex-row gap-5 mr-4 text-lg hidden sm:flex">
+        <div className="my-auto flex-row gap-5 mr-4 text-lg hidden sm:flex items-center">
           <Link to="./profile">
             {currentLang === "en" ? "Profile" : "个人资料"}
           </Link>
-          <Separator orientation="vertical" className="bg-white text-white h-auto" />
+
+          <Separator orientation="vertical" className="bg-white text-white" />
 
           <HoverCard openDelay="10ms" closeDelay="200">
             <HoverCardTrigger className="select-none cursor-pointer">
@@ -64,26 +76,49 @@ function NavBar() {
               </Link>
             </HoverCardContent>
           </HoverCard>
-        </div>
-
-        {/* Language Selection */}
-        <div className="my-auto flex gap-2">
-          <button
-            onClick={() => handleLanguageChange("en")}
-            className={`text-lg ${language === "en" ? "font-bold" : ""}`}
-          >
-            {currentLang === "en" ? "English" : "英文"}
-          </button>
           <Separator orientation="vertical" className="bg-white text-white h-auto" />
-          <button
-            onClick={() => handleLanguageChange("zh")}
-            className={`text-lg ${language === "zh" ? "font-bold" : ""}`}
-          >
-            {currentLang === "en" ? "Chinese" : "中文"}
-          </button>
+
+          <Toggle onClick={handleLanguageChange}>
+            <p className="text-lg">{currentLang === "en" ? "Chinese" : "中文"}</p>
+          </Toggle>
         </div>
 
         <div className="my-auto mr-4 block sm:hidden">
+          <Sheet>
+            <SheetTrigger>
+              <FontAwesomeIcon icon={faBars} size="2x" />
+            </SheetTrigger>
+            <SheetContent className="max-w-[400px] w-3/4">
+              <SheetHeader>
+                <SheetContent>
+                  <p onClick={handleLanguageChange}>{currentLang === "en" ? "Chinese" : "中文"}</p>
+                  <Separator className="my-4" />
+
+                  <Link to="./profile">
+                    {currentLang === "en" ? "Profile" : "个人资料"}
+                  </Link>
+                  <Separator className="my-4" />
+
+                  <Link to="/login/teacher">
+                    {currentLang === "en" ? "Login for Teachers" : "教师登录"}
+                  </Link>
+                  <Separator className="my-4" />
+                  <Link to="/login">
+                    {currentLang === "en" ? "Login For Students" : "学生登录"}
+                  </Link>
+                  <Separator className="my-4" />
+                  <Link to="/register">
+                    {currentLang === "en" ? "Register For Students" : "学生注册"}
+                  </Link>
+
+                </SheetContent>
+              </SheetHeader>
+            </SheetContent>
+          </Sheet>
+
+        </div>
+
+        {/* <div className="my-auto mr-4 block sm:hidden">
           <Popover>
             <PopoverTrigger>
               <FontAwesomeIcon icon={faBars} size="2x" />
@@ -117,7 +152,7 @@ function NavBar() {
               </div>
             </PopoverContent>
           </Popover>
-        </div>
+        </div> */}
       </div>
     </div>
   );

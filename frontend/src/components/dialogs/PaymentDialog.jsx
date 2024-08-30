@@ -56,10 +56,10 @@ const PaymentDialog = ({open, setOpen, selectedCourse, setSelectedCourse}) => {
                         <Tabs defaultValue="stripe">
                             <TabsList className="flex">
                                 <TabsTrigger value="paypal">PayPal</TabsTrigger>
-                                <TabsTrigger value="stripe">Stripe</TabsTrigger>
+                                <TabsTrigger value="stripe">Credit Card/Debit Card</TabsTrigger>
                                 <TabsTrigger value="promptpay">PromptPay</TabsTrigger>
                                 <TabsTrigger value="wise">Wise</TabsTrigger>
-                                <TabsTrigger value="taiwanpay">Taiwan Post</TabsTrigger>
+                                <TabsTrigger value="taiwanpay">中華郵政</TabsTrigger>
                             </TabsList>
                             <TabsContent value="paypal">
                                 <PayPalForm courseId={selectedCourse._id} price={selectedCourse.price} type={type} onPaymentSuccess={handlePaymentSuccess}/>

@@ -9,7 +9,7 @@ import { Button } from "../ui/button";
 import axios from "axios";
 import { Dialog, DialogTrigger, DialogContent, DialogTitle, DialogDescription, DialogFooter } from "../ui/dialog";
 
-const TeacherInfoCard = ({ tr_data, isEditable, isDeleteable, fullScreen=false }) => {
+const TeacherInfoCard = ({ tr_data, isEditable, isDeleteable }) => {
     const [isEditing, setIsEditing] = useState(false);
     const [isDialogOpen, setIsDialogOpen] = useState(false);
 
@@ -22,23 +22,22 @@ const TeacherInfoCard = ({ tr_data, isEditable, isDeleteable, fullScreen=false }
             await axios.post("/api/teacher/delete", {
                 teacher_id: tr_data._id,
             });
-            setIsDialogOpen(false);
+            setIsDialogOpen(false); // Close the dialog after deletion
         } catch (err) {
-            console.log(err.response.data.errors.messaage);
+            console.log(err);
         }
     };
 
-    const style = fullScreen ? "" : "max-w-[1176px]"
-
+    const currentLang = localStorage.getItem("language");
     return (
-        <Card className={`${style} mx-auto px-8 py-4 my-10`}>
+        <Card className="max-w-[1176px] mx-auto px-8 py-4 my-10">
             <div className="flex">
                 <img 
                     width="125px" 
                     height="125px" 
                     src={`${websiteUrl}/${tr_data.img}`} 
-                    className="rounded-full w-[125px]" 
-                    alt="Teacher"
+                    className="rounded-full w-[125px] h-[125px]" 
+                    alt={currentLang === "en" ? "Teacher" : "教師"}
                 />
                 <div className="flex flex-col justify-between ml-4">
                     <div>
@@ -48,15 +47,15 @@ const TeacherInfoCard = ({ tr_data, isEditable, isDeleteable, fullScreen=false }
                     <div className="flex items-center justify-center gap-4 text-md">
                         <div className="flex flex-col sm:flex-row justify-center items-center">
                             <FontAwesomeIcon icon={faStar} className="text-yellow-500 text-lg mr-1" />
-                            <p>4.9/5</p>
+                            <p>{currentLang === "en" ? "4.9/5" : "4.9/5"}</p>
                         </div>
                         <div className="flex flex-col sm:flex-row justify-center items-center">
                             <FontAwesomeIcon icon={faUser} className="text-yellow-500 text-lg mr-1" />
-                            <span>500</span>
+                            <span>{currentLang === "en" ? "500" : "500"}</span>
                         </div>
                         <div className="flex flex-col sm:flex-row justify-center items-center">
                             <FontAwesomeIcon icon={faMessage} className="text-yellow-500 text-lg mr-1" />
-                            <span>99.9%</span>  
+                            <span>{currentLang === "en" ? "99.9%" : "99.9%"}</span>
                         </div>
                     </div>
                     {isEditable && (
@@ -67,16 +66,12 @@ const TeacherInfoCard = ({ tr_data, isEditable, isDeleteable, fullScreen=false }
                             <FontAwesomeIcon icon={faEdit} />
                         </button>
                     )}
-                    <Button className="bg-pink-900 hover:bg-pink-800 my-2">
-                        <a className="w-full p-full" href={tr_data.contact} target="_blank" rel="noopener noreferrer">Contact</a>
-
-                    </Button>
                 </div>
             </div>
 
             {!isEditing ? (
                 <>
-                    <H4 className="mt-8">About Me</H4>
+                    <H4 className="mt-8">{currentLang === "en" ? "About Me" : "關於我"}</H4>
                     <P>{tr_data.description}</P>
                 </>
             ) : (
@@ -86,16 +81,22 @@ const TeacherInfoCard = ({ tr_data, isEditable, isDeleteable, fullScreen=false }
             {isDeleteable && (
                 <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
                     <DialogTrigger asChild>
-                        <Button variant="destructive" className="my-2">Delete</Button>
+                        <Button variant="destructive" className="my-2">
+                            {currentLang === "en" ? "Delete" : "刪除"}
+                        </Button>
                     </DialogTrigger>
                     <DialogContent>
-                        <DialogTitle>Confirm Deletion</DialogTitle>
+                        <DialogTitle>{currentLang === "en" ? "Confirm Deletion" : "確認刪除"}</DialogTitle>
                         <DialogDescription>
-                            Are you sure you want to delete this teacher? This action cannot be undone.
+                            {currentLang === "en" ? "Are you sure you want to delete this teacher? This action cannot be undone." : "您確定要刪除此教師嗎？此操作無法撤銷。"}
                         </DialogDescription>
                         <DialogFooter>
-                            <Button variant="ghost" onClick={() => setIsDialogOpen(false)}>Cancel</Button>
-                            <Button variant="destructive" onClick={onDelete}>Delete</Button>
+                            <Button variant="ghost" onClick={() => setIsDialogOpen(false)}>
+                                {currentLang === "en" ? "Cancel" : "取消"}
+                            </Button>
+                            <Button variant="destructive" onClick={onDelete}>
+                                {currentLang === "en" ? "Delete" : "刪除"}
+                            </Button>
                         </DialogFooter>
                     </DialogContent>
                 </Dialog>

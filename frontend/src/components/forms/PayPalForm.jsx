@@ -24,6 +24,8 @@ const ButtonWrapper = ({ showSpinner, courseId, type }) => {
     }
     async function onApprove(data) {
 
+        console.log(onApprove)
+
         const response = await axios.post("/api/payment/paypal/confirm", {
             orderID: data.orderID
         })

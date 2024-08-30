@@ -49,6 +49,19 @@ const AdminPage = () => {
     const [[pending, accepted, denied], setData] = useState([[], [], []]);
     const [teachers, setTeachers] = useState([]);
 
+    const send = async (payment_id, type) => {
+        try {
+            await axios.post(
+                `/api/payment/manual/${type}`,
+                { payment_id },
+                { headers: { "Content-Type": "application/json" } }
+            );
+            fetchData();
+        } catch (error) {
+            console.error("Error sending data:", error);
+        }
+    };
+
     const fetchData = async () => {
         try {
             const response = await axios.post("/api/payment/manual/get");

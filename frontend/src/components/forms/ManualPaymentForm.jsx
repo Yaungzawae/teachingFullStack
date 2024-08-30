@@ -54,8 +54,8 @@ const ManualPaymentForm = ({ courseId, price, type, onPaymentSuccess, paymentMet
     return (
         <Form {...form}>
             {paymentMethod == "wise" ? 
-            <h2 className="my-3">For Wise, please transfer to this account: <b>012345678</b></h2> :
-            <h2 className="my-3">For Taiwan, please transfer to this account: <b>012345678</b></h2> 
+            <h2 className="my-3">For Wise, please transfer to this account: <b>liyangcho09@gmail.com</b></h2> :
+            <h2 className="my-3">中華郵政（700）轉入帳號: <b>0101628-0264815</b></h2> 
             }
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-8 max-w-[500px] mx-auto">
                 <FormField
@@ -63,7 +63,7 @@ const ManualPaymentForm = ({ courseId, price, type, onPaymentSuccess, paymentMet
                     name="img"
                     render={({ field }) => (
                         <FormItem>
-                            <FormLabel>Upload Screenshot</FormLabel>
+                            <FormLabel>請上傳付款證明</FormLabel>
                             <FormControl>
                                 <Input
                                     type="file"
@@ -89,7 +89,7 @@ const ManualPaymentForm = ({ courseId, price, type, onPaymentSuccess, paymentMet
                 />
 
                 {error && <p className="text-red-500">{JSON.stringify(error)}</p>}
-                <Button type="submit" className="block mx-auto">Submit</Button>
+                <Button type="submit" className="block mx-auto">提交</Button>
             </form>
         </Form>
     );

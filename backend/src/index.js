@@ -9,7 +9,8 @@ const sessionRoute = require("./routes/Session.js");
 
 const classRoute = require("./routes/Class.js");
 const paymentRoute = require("./routes/Payment.js");
-const UserRoute = require("./routes/User.js")
+const UserRoute = require("./routes/User.js");
+const path = require("path");
 
 
 
@@ -32,10 +33,12 @@ app.use("/api/payment", paymentRoute);
 
 app.use("/api/user", UserRoute);
 
-app.get("/api/hello", (req,res)=>{
-    res.json({data: "HELLLO"}) 
-})
+app.use(express.static(__dirname + "/views/dist"))
 
+app.get('/*', function (req, res) {
+    res.sendFile(path.join(__dirname, '/views/dist', 'index.html'));
+  });
+  
 
 app.listen(process.env.PORT, ()=>{  
     console.log(`Server is running on PORT ${process.env.PORT}`)
